@@ -54,7 +54,7 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	_, _ = w.Write(resp)
 }
 
 // Обработчик для отправки задачи на сервер
@@ -71,6 +71,11 @@ func postTask(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.Unmarshal(buf.Bytes(), &task); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if _, exists := tasks[task.ID]; exists {
+		http.Error(w, "Задача с таким ID существует", http.StatusBadRequest)
 		return
 	}
 
@@ -99,7 +104,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	_, _ = w.Write(resp)
 }
 
 // Обработчик удаления задачи по ID
